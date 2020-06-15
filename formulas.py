@@ -1,11 +1,17 @@
 
-def get_use_left(year, month, row_number):
+def get_next_year_month(year, month):
+    """Return next_year, next_month"""
     if month == 12:
         next_month = 1
         next_year = year + 1
     else:
         next_month = month + 1
         next_year = year
+    return next_year, next_month
+
+
+def get_use_left(year, month, row_number):
+    next_year, next_month = get_next_year_month(year, month)
 
     USE_LEFT = {
         "USE": f"=SUM(FILTER('Form Responses 1'!D:D, 'Form Responses 1'!B:B>\
@@ -16,8 +22,8 @@ def get_use_left(year, month, row_number):
             !E:E=\"Yura\",'Form Responses 1'!B:B>DATE({year},{month},5),\
                 'Form Responses 1'!B:B<DATE({next_year},{next_month},6)))",
         
-        "TANYA_USE": f"=sum(FILTER('Form Responses 1'!D:D, 'Form Responses 1\
-            '!E:E=\"Tanya\",'Form Responses 1'!B:B>DATE({year},{month},5),\
+        "TANYA_USE": f"=sum(FILTER('Form Responses 1'!D:D, 'Form Responses 1'\
+            !E:E=\"Tanya\",'Form Responses 1'!B:B>DATE({year},{month},5),\
                 'Form Responses 1'!B:B<DATE({next_year},{next_month},6)))",
         
         "YURA_LEFT": f"=G{row_number}*0.6-C{row_number}",
@@ -32,16 +38,21 @@ def get_use_left(year, month, row_number):
     return USE_LEFT
 
 
-
-def get_statistics(year_start, year_end, month_start, month_end):
-    TEMPLATE = (
+def fill_template(category, year_start, year_end, month_start, month_end):
+    category = category.capitalize()
+    template = (
         "=sum(FILTER('Form Responses 1'!D:D,'Form Responses " +
-        "1'!C:C=\"{CATEGORY}\",'Form Responses 1'!B:B>" +
-        "DATE({YEAR_START},{MONTH_START},5),'Form Responses 1'" +
-        "!B:B<DATE({YEAR_END},{MONTH_END},6)))"
+        f"1'!C:C=\"{category}\",'Form Responses 1'!B:B>" +
+        f"DATE({year_start},{month_start},5),'Form Responses 1'" +
+        f"!B:B<DATE({year_end},{month_end},6)))"
     )
+    return template
+
+
+def get_statistics(year, month, row_number):
+    next_year, next_month = get_next_year_month(year, month)
     CATEGORIES = [
-        "FOODSTAFF",
+        "FOODSTUFF",
         "REST",
         "SWEET",
         "CAFE",
@@ -52,11 +63,11 @@ def get_statistics(year_start, year_end, month_start, month_end):
         "OTHER"
     ]
     formulas = {
-        c: TEMPLATE.replace('{CATEGORY}', c.capitalize())\
-            .replace('{YEAR_START}', str(year_start))\
-                .replace('{MONTH_START}', str(month_start))\
-                    .replace('{YEAR_END}', str(year_end))\
-                        .replace('{MONTH_END}', str(month_end))\
-                            for c in CATEGORIES
+        c: fill_template(c, year, next_year, month, next_month)
+            for c in CATEGORIES
     }
+    formulas['SUM'] = f'=SUMIF(B{row_number}:J{row_number},"<>#N/A")'
+    formulas['VACATION'] = ''
+    formulas['SUPER_SUM'] = F'=K{row_number}+L{row_number}'
+
     return formulas

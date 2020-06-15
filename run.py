@@ -6,7 +6,7 @@ import httplib2
 from  apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
-from formulas import get_use_left
+from formulas import get_use_left, get_statistics
 
 
 # Google Developer Console
@@ -67,6 +67,19 @@ formula_write_data = {
     'excel_range': f'UseLeft!B{new_row}:{new_row}',
     'dimension': 'ROWS',
     'values': use_left_data,
+    'render_option': 'FORMULA',
+}
+write_data(**formula_write_data)
+
+
+write_data(f'Statistics!A{new_row}', 'ROWS', [[month_name]])
+
+statistics_data = get_statistics(year, month, new_row)
+statistics_data = [[data for data in statistics_data.values()]]
+formula_write_data = {
+    'excel_range': f'Statistics!B{new_row}:{new_row}',
+    'dimension': 'ROWS',
+    'values': statistics_data,
     'render_option': 'FORMULA',
 }
 write_data(**formula_write_data)
