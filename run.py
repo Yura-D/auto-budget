@@ -6,8 +6,14 @@ import httplib2
 from  apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
-from formulas import get_use_left, get_statistics
+from formulas import get_use_left, get_statistics, get_my_statistics
 
+
+TABLE_FORMULAS = [
+    ("UseLeft!", get_use_left),
+    ("Statistics!", get_statistics),
+    ("Yura\'s Statistics!", get_my_statistics)
+]
 
 # Google Developer Console
 CREDENTIALS_FILE = 'creds.json'
@@ -46,77 +52,35 @@ def write_data(excel_range, dimension, values, render_option=None):
     return values
 
 
-months = get_data('UseLeft!A1:A', 'COLUMNS')
-excel_months_list = months['values'][0]
+def get_month_year_new_row(table_name):
+    months = get_data(f'{table_name}A1:A', 'COLUMNS')
+    excel_months_list = months['values'][0]
 
-new_row = len(excel_months_list) + 1
+    new_row = len(excel_months_list) + 1
 
-last_month = excel_months_list[-1]
-months_list = list(calendar.month_name)
-year = datetime.now().year
-month = datetime.now().month
-
-
-month_name = calendar.month_name[datetime.now().month]
-
-write_data(f'UseLeft!A{new_row}', 'ROWS', [[month_name]])
-
-use_left_data = get_use_left(year, month, new_row)
-use_left_data = [[data for data in use_left_data.values()]]
-formula_write_data = {
-    'excel_range': f'UseLeft!B{new_row}:{new_row}',
-    'dimension': 'ROWS',
-    'values': use_left_data,
-    'render_option': 'FORMULA',
-}
-write_data(**formula_write_data)
+    last_month = excel_months_list[-1]
+    months_list = list(calendar.month_name)
+    year = datetime.now().year
+    month = datetime.now().month
+    month_name = calendar.month_name[datetime.now().month]
+    return new_row, year, month, month_name
 
 
-write_data(f'Statistics!A{new_row}', 'ROWS', [[month_name]])
+def update_table(table_name, formula_function):
+    new_row, year, month, month_name = get_month_year_new_row(table_name)
+    write_data(f'{table_name}A{new_row}', 'ROWS', [[month_name]])
 
-statistics_data = get_statistics(year, month, new_row)
-statistics_data = [[data for data in statistics_data.values()]]
-formula_write_data = {
-    'excel_range': f'Statistics!B{new_row}:{new_row}',
-    'dimension': 'ROWS',
-    'values': statistics_data,
-    'render_option': 'FORMULA',
-}
-write_data(**formula_write_data)
-
-
-
-
-"""
-
-
-if last_month == months_list[12]:
-    write_data(month_row, 'ROWS', [[datetime.now().year]])
-    new_row += 1
-    month_row = f'UseLeft!A{new_row}'
-    write_data(month_row, 'ROWS', [[months_list[1]]])
+    data = formula_function(year, month, new_row)
+    data = [[d for d in data.values()]]
     formula_write_data = {
-        'excel_range': f'UseLeft!B{new_row}:{new_row}',
+        'excel_range': f'{table_name}B{new_row}:{new_row}',
         'dimension': 'ROWS',
-        'values': 'hello',
+        'values': data,
         'render_option': 'FORMULA',
     }
     write_data(**formula_write_data)
 
 
-
-values = service.spreadsheets().values().batchUpdate(
-    spreadsheetId=spreadsheet_id,
-    body={
-        "valueInputOption": "USER_ENTERED",
-        "data": [
-            {"range": "B3:C4",
-             "majorDimension": "ROWS",
-             "values": [["This is B3", "This is C3"], ["This is B4", "This is C4"]]},
-            {"range": "D5:E6",
-             "majorDimension": "COLUMNS",
-             "values": [["This is D5", "This is D6"], ["This is E5", "=5+5"]]}
-	]
-    }
-).execute()
-"""
+if __name__ == '__main__':
+    for table_name, func in TABLE_FORMULAS:
+        update_table(table_name, func)
