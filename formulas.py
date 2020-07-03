@@ -17,15 +17,12 @@ def get_use_left(year, month, row_number):
         "USE": f"=SUM(FILTER('Form Responses 1'!D:D, 'Form Responses 1'!B:B>\
             DATE({year},{month},5),'Form Responses 1'!B:B<\
                 DATE({next_year},{next_month},6)))",
-        
         "YURA_USE": f"=sum(FILTER('Form Responses 1'!D:D, 'Form Responses 1'\
             !E:E=\"Yura\",'Form Responses 1'!B:B>DATE({year},{month},5),\
                 'Form Responses 1'!B:B<DATE({next_year},{next_month},6)))",
-        
         "TANYA_USE": f"=sum(FILTER('Form Responses 1'!D:D, 'Form Responses 1'\
             !E:E=\"Tanya\",'Form Responses 1'!B:B>DATE({year},{month},5),\
                 'Form Responses 1'!B:B<DATE({next_year},{next_month},6)))",
-        
         "YURA_LEFT": f"=G{row_number}*0.6-C{row_number}",
         "TANYA_LEFT": f"=G{row_number}*0.4-D{row_number}",
         "FOND": "8000",
@@ -66,7 +63,7 @@ def get_statistics(year, month, row_number):
     ]
     formulas = {
         c: fill_template(c, year, next_year, month, next_month, TABLE_NAME)
-            for c in CATEGORIES
+        for c in CATEGORIES
     }
     formulas['SUM'] = f'=SUMIF(B{row_number}:J{row_number},"<>#N/A")'
     formulas['VACATION'] = ''
@@ -93,7 +90,7 @@ def get_my_statistics(year, month, row_number):
     ]
     formulas = {
         c: fill_template(c, year, next_year, month, next_month, TABLE_NAME)
-            for c in CATEGORIES
+        for c in CATEGORIES
     }
     formulas['SUM'] = f'=SUMIF(B{row_number}:L{row_number},"<>#N/A")'
     formulas['FAMILY'] = ''

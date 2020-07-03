@@ -1,9 +1,8 @@
-from pprint import pprint
 import calendar
 from datetime import datetime
 
 import httplib2
-from  apiclient import discovery
+from apiclient import discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
 from formulas import get_use_left, get_statistics, get_my_statistics
@@ -31,8 +30,8 @@ def get_data(excel_range, dimension, render_option=None):
     values = service.spreadsheets().values().get(
         spreadsheetId=spreadsheet_id,
         range=excel_range,
-        majorDimension=dimension, # 'ROWS',
-        valueRenderOption=render_option, # FORMULA
+        majorDimension=dimension,  # 'ROWS',
+        valueRenderOption=render_option,  # FORMULA
     ).execute()
     return values
 
@@ -44,9 +43,11 @@ def write_data(excel_range, dimension, values, render_option=None):
             "valueInputOption": "USER_ENTERED",
             "responseValueRenderOption": render_option,
             "data": [
-                {"range": excel_range,
-                "majorDimension": dimension,
-                "values": values},
+                {
+                    "range": excel_range,
+                    "majorDimension": dimension,
+                    "values": values,
+                },
             ]
         }).execute()
     return values
@@ -58,8 +59,6 @@ def get_month_year_new_row(table_name):
 
     new_row = len(excel_months_list) + 1
 
-    last_month = excel_months_list[-1]
-    months_list = list(calendar.month_name)
     year = datetime.now().year
     month = datetime.now().month
     month_name = calendar.month_name[datetime.now().month]
@@ -81,6 +80,6 @@ def update_table(table_name, formula_function):
     write_data(**formula_write_data)
 
 
-if __name__ == '__main__':
+def make_changes():
     for table_name, func in TABLE_FORMULAS:
         update_table(table_name, func)
