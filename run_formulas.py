@@ -1,5 +1,6 @@
 import calendar
 from datetime import datetime
+import os
 
 import httplib2
 from apiclient import discovery
@@ -16,7 +17,7 @@ TABLE_FORMULAS = [
 
 # Google Developer Console
 CREDENTIALS_FILE = 'creds.json'
-spreadsheet_id = '1u8iMJMs0o1Ak3dvpKSu9CTkjKVumYJ_toJvP0dsBdGw'
+spreadsheet_id = os.environ.get('TABLE')
 
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
     CREDENTIALS_FILE,
