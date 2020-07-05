@@ -111,6 +111,9 @@ env.bak/
 venv.bak/
 ENV
 
+# notes
+note.txt
+
 # Spyder project settings
 .spyderproject
 .spyproject
