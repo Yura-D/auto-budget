@@ -31,7 +31,7 @@ Pygments==2.6.1
 pylint==2.5.2
 pytz==2019.3
 requests==2.23.0
-rsa==4.0
+rsa==4.1
 six==1.14.0
 toml==0.10.1
 traitlets==4.3.3
