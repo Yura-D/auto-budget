@@ -23,14 +23,14 @@ def get_use_left(year, month, row_number):
         "TANYA_USE": f"=sum(FILTER('Form Responses 1'!D:D, 'Form Responses 1'\
             !E:E=\"Tanya\",'Form Responses 1'!B:B>DATE({year},{month},5),\
                 'Form Responses 1'!B:B<DATE({next_year},{next_month},6)))",
-        "YURA_LEFT": f"=G{row_number}*0.6-C{row_number}",
-        "TANYA_LEFT": f"=G{row_number}*0.4-D{row_number}",
-        "FOND": "8000",
-        "PLAN": "8000",
+        "YURA_LEFT": f"=G{row_number}*0.7-C{row_number}",
+        "TANYA_LEFT": f"=G{row_number}*0.3-D{row_number}",
+        "FOND": "10000",
+        "PLAN": "10000",
         "COMMENT": "",
         "EMPTY": "",
-        "YURA_NEED": f"=B{row_number}*0.6",
-        "TANYA_NEED": f"=B{row_number}*0.4"
+        "YURA_NEED": f"=B{row_number}*0.7",
+        "TANYA_NEED": f"=B{row_number}*0.3"
     }
     return use_left
 
